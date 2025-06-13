@@ -1,0 +1,369 @@
+<!DOCTYPE html>
+<html lang="de" class="scroll-smooth">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Sportrix Animation Demo</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+  </head>
+  <body class="bg-gray-900 text-white overflow-x-hidden">
+    <!-- Dark/Light mode detection -->
+    <script>
+      if (
+        window.matchMedia &&
+        window.matchMedia("(prefers-color-scheme: dark)").matches
+      ) {
+        document.documentElement.classList.add("dark");
+      }
+      window
+        .matchMedia("(prefers-color-scheme: dark)")
+        .addEventListener("change", (event) => {
+          if (event.matches) {
+            document.documentElement.classList.add("dark");
+          } else {
+            document.documentElement.classList.remove("dark");
+          }
+        });
+    </script>
+
+    <!-- Fixed centered text -->
+    <div id="fixedText" class="fixed-text text-center max-w-4xl px-6">
+      <h1 class="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
+        <span class="block">Spowi mit</span>
+        <span class="block text-primary">Herz</span>
+        <span class="block">und Leidenschaft</span>
+      </h1>
+      <p class="text-lg md:text-xl opacity-80 max-w-2xl mx-auto">
+        Als Sportwissenschafterin betreue ich Sportler:innen im Spitzen- und
+        Breitensport
+      </p>
+    </div>
+
+    <!-- Scroll indicator -->
+    <div class="scroll-indicator text-sm opacity-60">
+      <span>Scroll</span>
+      <div class="w-px h-20 bg-current mt-4 mx-auto floating"></div>
+    </div>
+
+    <!-- Section 1: Black Hero -->
+    <section
+      id="section1"
+      class="section-transition relative h-screen bg-black text-white overflow-hidden">
+      <div class="bg-image-moving hero-image absolute inset-0"></div>
+      <div
+        class="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
+      <div class="parallax-element parallax-back hero-image"></div>
+
+      <!-- Moving Avatars -->
+      <div class="floating-avatars absolute inset-0 pointer-events-none">
+        <div
+          class="avatar avatar-1 absolute w-24 h-24 md:w-32 md:h-32 rounded-full overflow-hidden opacity-80">
+          <div
+            class="w-full h-full bg-gradient-to-br from-blue-400 to-purple-500 flex items-center justify-center text-white font-bold text-xl">
+            AT
+          </div>
+        </div>
+        <div
+          class="avatar avatar-2 absolute w-20 h-20 md:w-28 md:h-28 rounded-full overflow-hidden opacity-70">
+          <div
+            class="w-full h-full bg-gradient-to-br from-green-400 to-teal-500 flex items-center justify-center text-white font-bold text-lg">
+            SB
+          </div>
+        </div>
+        <div
+          class="avatar avatar-3 absolute w-28 h-28 md:w-36 md:h-36 rounded-full overflow-hidden opacity-90">
+          <div
+            class="w-full h-full bg-gradient-to-br from-orange-400 to-red-500 flex items-center justify-center text-white font-bold text-xl">
+            MK
+          </div>
+        </div>
+        <div
+          class="avatar avatar-4 absolute w-22 h-22 md:w-30 md:h-30 rounded-full overflow-hidden opacity-60">
+          <div
+            class="w-full h-full bg-gradient-to-br from-pink-400 to-purple-600 flex items-center justify-center text-white font-bold">
+            JL
+          </div>
+        </div>
+        <div
+          class="avatar avatar-5 absolute w-26 h-26 md:w-34 md:h-34 rounded-full overflow-hidden opacity-75">
+          <div
+            class="w-full h-full bg-gradient-to-br from-indigo-400 to-blue-600 flex items-center justify-center text-white font-bold text-lg">
+            DR
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- Section 2: Pink Transition -->
+    <section
+      id="section2"
+      class="section-transition relative h-screen bg-pink-bright text-white overflow-hidden">
+      <div class="bg-image-moving sport-image-1 absolute inset-0"></div>
+      <div class="parallax-element parallax-back sport-image-1"></div>
+      <div
+        id="section2Content"
+        class="fixed-text text-center max-w-4xl px-6 opacity-0">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          <span class="block">Leistungs-</span>
+          <span class="block text-accent">diagnostik</span>
+        </h2>
+        <p class="text-lg md:text-xl opacity-90">
+          Die Basis für deine individuelle Trainingsplanung
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 3: Pink to White transition -->
+    <section
+      id="section3"
+      class="section-transition relative h-screen bg-pink-dark text-white overflow-hidden">
+      <!-- Background Video -->
+      <video
+        autoplay
+        muted
+        loop
+        class="absolute inset-0 w-full h-full object-cover opacity-30">
+        <source src="data:video/mp4;base64," type="video/mp4" />
+      </video>
+      <!-- Fallback animated background -->
+      <div
+        class="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-blue-500/20 animate-pulse"></div>
+
+      <div class="bg-image-moving sport-image-2 absolute inset-0"></div>
+      <div class="parallax-element parallax-back sport-image-2"></div>
+      <div
+        id="section3Content"
+        class="fixed-text text-center max-w-4xl px-6 opacity-0">
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          <span class="block">Personal</span>
+          <span class="block text-accent">Training</span>
+        </h2>
+        <p class="text-lg md:text-xl opacity-90">
+          Gemeinsames Training, alles auf dich zugeschnitten
+        </p>
+      </div>
+    </section>
+
+    <!-- Section 4: White -->
+    <section
+      id="section4"
+      class="section-transition relative h-screen bg-gray-50 text-gray-900 overflow-hidden">
+      <div class="bg-image-moving sport-image-3 absolute inset-0"></div>
+      <div class="parallax-element parallax-back sport-image-3"></div>
+      <div
+        id="section4Content"
+        class="fixed-text text-center max-w-4xl px-6 opacity-0">
+        <!-- Heart Image above Trainings- -->
+        <div class="heart-image">
+          <div class="heart-icon"></div>
+        </div>
+        <h2 class="text-4xl md:text-5xl font-bold mb-4">
+          <span class="block">Trainings-</span>
+          <span class="block text-primary">therapie</span>
+        </h2>
+        <p class="text-lg md:text-xl opacity-80">
+          Das Herz im richtigen Trainings-Rhythmus
+        </p>
+      </div>
+    </section>
+
+    <!-- Final section -->
+    <section
+      id="section5"
+      class="section-transition relative h-screen bg-white text-gray-900 overflow-hidden">
+      <div class="absolute inset-0 flex items-center justify-center">
+        <div class="text-center max-w-4xl px-6">
+          <h2 class="text-4xl md:text-6xl font-bold mb-8">
+            Bereit für dein
+            <span class="text-primary">Bewegungsprojekt?</span>
+          </h2>
+          <button
+            class="bg-primary text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary/90 transition-colors">
+            Jetzt anfragen
+          </button>
+        </div>
+      </div>
+    </section>
+
+    <script>
+      // Intersection Observer for section transitions
+      const sections = document.querySelectorAll("section");
+      const fixedText = document.getElementById("fixedText");
+
+      const observerOptions = {
+        threshold: [0, 0.25, 0.5, 0.75, 1],
+        rootMargin: "0px",
+      };
+
+      const sectionObserver = new IntersectionObserver((entries) => {
+        entries.forEach((entry) => {
+          const sectionId = entry.target.id;
+          const sectionNumber = parseInt(sectionId.replace("section", ""));
+
+          if (entry.isIntersecting) {
+            // Update body background based on section
+            updateBodyBackground(sectionNumber, entry.intersectionRatio);
+
+            // Show/hide appropriate content
+            updateTextContent(sectionNumber, entry.intersectionRatio);
+          }
+        });
+      }, observerOptions);
+
+      sections.forEach((section) => {
+        sectionObserver.observe(section);
+      });
+
+      function updateBodyBackground(sectionNumber, ratio) {
+        const body = document.body;
+
+        // Remove all background classes
+        body.classList.remove(
+          "bg-black",
+          "bg-pink-bright",
+          "bg-pink-dark",
+          "bg-gray-50",
+          "bg-white"
+        );
+        body.classList.remove("text-white", "text-gray-900");
+
+        // Add appropriate classes based on section
+        switch (sectionNumber) {
+          case 1:
+            body.classList.add("bg-black", "text-white");
+            break;
+          case 2:
+            body.classList.add("bg-pink-bright", "text-white");
+            break;
+          case 3:
+            body.classList.add("bg-pink-dark", "text-white");
+            break;
+          case 4:
+            body.classList.add("bg-gray-50", "text-gray-900");
+            break;
+          case 5:
+            body.classList.add("bg-white", "text-gray-900");
+            break;
+        }
+      }
+
+      function updateTextContent(sectionNumber, ratio) {
+        const section2Content = document.getElementById("section2Content");
+        const section3Content = document.getElementById("section3Content");
+        const section4Content = document.getElementById("section4Content");
+
+        // Hide all content first
+        fixedText.style.opacity = "0";
+        section2Content.style.opacity = "0";
+        section3Content.style.opacity = "0";
+        section4Content.style.opacity = "0";
+
+        // Show appropriate content
+        switch (sectionNumber) {
+          case 1:
+            if (ratio > 0.3) {
+              fixedText.style.opacity = "1";
+            }
+            break;
+          case 2:
+            if (ratio > 0.3) {
+              section2Content.style.opacity = "1";
+            }
+            break;
+          case 3:
+            if (ratio > 0.3) {
+              section3Content.style.opacity = "1";
+            }
+            break;
+          case 4:
+            if (ratio > 0.3) {
+              section4Content.style.opacity = "1";
+            }
+            break;
+        }
+      }
+
+      // Parallax scrolling effect
+      let ticking = false;
+
+      function updateParallax() {
+        const scrolled = window.pageYOffset;
+        const parallaxElements = document.querySelectorAll(".bg-image-moving");
+
+        parallaxElements.forEach((element, index) => {
+          const rate = scrolled * -0.5;
+          element.style.transform = `translateY(${rate}px)`;
+        });
+
+        // Update avatar positions based on scroll
+        updateAvatarPositions(scrolled);
+
+        ticking = false;
+      }
+
+      function updateAvatarPositions(scrolled) {
+        const avatars = document.querySelectorAll(".floating-avatars .avatar");
+
+        avatars.forEach((avatar, index) => {
+          // Different movement speeds and directions for each avatar
+          let moveX, moveY;
+
+          switch (index) {
+            case 0: // avatar-1
+              moveX = scrolled * 0.3;
+              moveY = Math.sin(scrolled * 0.01) * 20;
+              break;
+            case 1: // avatar-2
+              moveX = scrolled * -0.4;
+              moveY = Math.cos(scrolled * 0.01) * 15;
+              break;
+            case 2: // avatar-3
+              moveX = scrolled * 0.2;
+              moveY = Math.sin(scrolled * 0.008) * 25;
+              break;
+            case 3: // avatar-4
+              moveX = scrolled * -0.3;
+              moveY = Math.cos(scrolled * 0.012) * 18;
+              break;
+            case 4: // avatar-5
+              moveX = scrolled * 0.5;
+              moveY = Math.sin(scrolled * 0.015) * 12;
+              break;
+            default:
+              moveX = 0;
+              moveY = 0;
+          }
+
+          // Apply transform with boundary constraints
+          const maxMoveX = window.innerWidth * 0.3;
+          const constrainedX = Math.max(-maxMoveX, Math.min(maxMoveX, moveX));
+
+          avatar.style.transform = `translate(${constrainedX}px, ${moveY}px)`;
+        });
+      }
+
+      function requestTick() {
+        if (!ticking) {
+          requestAnimationFrame(updateParallax);
+          ticking = true;
+        }
+      }
+
+      window.addEventListener("scroll", requestTick);
+
+      // Smooth scroll behavior
+      document.querySelectorAll('a[href^="#"]').forEach((anchor) => {
+        anchor.addEventListener("click", function (e) {
+          e.preventDefault();
+          document.querySelector(this.getAttribute("href")).scrollIntoView({
+            behavior: "smooth",
+          });
+        });
+      });
+
+      // Initialize
+      updateBodyBackground(1, 1);
+      updateTextContent(1, 1);
+    </script>
+  </body>
+</html>
