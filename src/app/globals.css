@@ -1,26 +1,8 @@
 @import "tailwindcss";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
-}
-
-body {
-  background: var(--background);
-  color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
-}
-
 .parallax-container {
   perspective: 1px;
-  height: 100vh;
+  height: 120vh;
   overflow-x: hidden;
   overflow-y: auto;
 }
@@ -39,30 +21,6 @@ body {
 
 .parallax-base {
   transform: translateZ(0);
-}
-
-.section-transition {
-  transition: background-color 0.8s ease, color 0.8s ease;
-}
-
-.hero-image {
-  background: linear-gradient(135deg, #1a1a1a 0%, #000000 100%);
-  opacity: 0.2;
-}
-
-.sport-image-1 {
-  background: linear-gradient(135deg, #ff1b6b 0%, #e8175d 100%);
-  opacity: 0.15;
-}
-
-.sport-image-2 {
-  background: linear-gradient(135deg, #ff1b6b 0%, #ffd23f 100%);
-  opacity: 0.15;
-}
-
-.sport-image-3 {
-  background: linear-gradient(135deg, #ffd23f 0%, #ffffff 100%);
-  opacity: 0.1;
 }
 
 .fixed-text {
@@ -105,26 +63,6 @@ body {
 }
 
 /* Avatar positioning and animations */
-.avatar-1 {
-  top: 15%;
-  left: 10%;
-}
-.avatar-2 {
-  top: 60%;
-  left: 85%;
-}
-.avatar-3 {
-  top: 25%;
-  right: 15%;
-}
-.avatar-4 {
-  top: 75%;
-  left: 20%;
-}
-.avatar-5 {
-  top: 40%;
-  right: 25%;
-}
 
 .floating-avatars .avatar {
   transition: transform 0.1s ease-out;

@@ -1,76 +1,84 @@
 'use client';
 import { useState, useEffect, useRef } from 'react';
-import '../globals.css'
+import Image from 'next/image';
+import '../globals.css';
+import gsap from "gsap";
+import { ScrollTrigger } from "gsap/ScrollTrigger";
+
+gsap.registerPlugin(ScrollTrigger);
 
 export default function HeroSection() {
-  const [isDark, setIsDark] = useState(false);
-  // FIX 1: Explicitly type the useRef for arrays
+
   const sectionsRef = useRef<(HTMLElement | null)[]>([]);
   const fixedTextRef = useRef<HTMLDivElement | null>(null);
   const section2ContentRef = useRef<HTMLDivElement | null>(null);
   const section3ContentRef = useRef<HTMLDivElement | null>(null);
   const section4ContentRef = useRef<HTMLDivElement | null>(null);
-  const avatarsRef = useRef<(HTMLDivElement | null)[]>([]);
+  const avatarsRef = useRef<(HTMLImageElement | null)[]>([]);
   const parallaxRef = useRef<(HTMLDivElement | null)[]>([]);
 
-  // Section configurations
-  const sectionConfigs: { [key: number]: { bg: string; text: string; } } = { // Added type for sectionConfigs
-    1: { bg: 'bg-black', text: 'text-white' },
-    2: { bg: 'bg-pink-bright', text: 'text-white' },
-    3: { bg: 'bg-pink-dark', text: 'text-white' },
-    4: { bg: 'bg-gray-50', text: 'text-gray-900' },
-    5: { bg: 'bg-white', text: 'text-gray-900' }
+
+  const sectionConfigs: { [key: number]: { color: string; } } = {
+    1: { color: '#FFFFFF' }, // White (Hero)
+    2: { color: '#FF1B6B' }, // Bright Pink
+    3: { color: '#212020' }, // Black
+    4: { color: '#F9FAFB' }, // Light Gray
+    5: { color: '#FFFFFF' }  // White (Final)
   };
 
-  // Avatar movement configurations
-  const avatarConfigs = [
-    { speedX: 0.3, speedY: 0.01, amplitude: 20, func: Math.sin },
-    { speedX: -0.4, speedY: 0.01, amplitude: 15, func: Math.cos },
-    { speedX: 0.2, speedY: 0.008, amplitude: 25, func: Math.sin },
-    { speedX: -0.3, speedY: 0.012, amplitude: 18, func: Math.cos },
-    { speedX: 0.5, speedY: 0.015, amplitude: 12, func: Math.sin }
+
+  interface AvatarItem {
+    imageUrl: string;
+    class: string;
+    size: string;
+    baseWidth: number;
+    baseHeight: number;
+    positionClasses: string;
+  }
+
+  const commonAvatarWidth = 120;
+  const commonAvatarHeight = 120;
+  const commonAvatarSizeClass = 'w-28 h-28 md:w-28 md:h-28 lg:w-36 lg:h-36';
+
+
+  const avatarData: AvatarItem[] = [
+    // Top row
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848933/3_p5ll41.png', class: 'avatar-1', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'left-8 top-16 sm:left-12 sm:top-20' },
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/4_fymrev.png', class: 'avatar-2', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'right-8 top-16 sm:right-12 sm:top-20' },
+
+    // Middle-top row
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/6_tufyle.png', class: 'avatar-3', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'left-20 top-40 sm:left-28 sm:top-44 md:left-36 md:top-48' },
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/5_hbo13q.png', class: 'avatar-4', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'right-20 top-40 sm:right-28 sm:top-44 md:right-36 md:top-48' },
+
+    // Middle row
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/7_jnabcr.png', class: 'avatar-5', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'left-4 top-1/2 transform -translate-y-1/2 sm:left-6' },
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848933/2_lbu6s9.png', class: 'avatar-6', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'right-4 top-1/2 transform -translate-y-1/2 sm:right-6' },
+
+    // Bottom row
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/9_ziillq.png', class: 'avatar-7', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'left-16 bottom-20 sm:left-24 sm:bottom-24 md:left-32' },
+    { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/8_vdlo4t.png', class: 'avatar-8', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'right-16 bottom-20 sm:right-24 sm:bottom-24 md:right-32' }
   ];
 
+
+
+  // Section content visibility observer
   useEffect(() => {
-    // Dark mode detection
-    const isDarkMode = window.matchMedia && window.matchMedia('(prefers-color-scheme: dark)').matches;
-    setIsDark(isDarkMode);
-
-    const mediaQuery = window.matchMedia('(prefers-color-scheme: dark)');
-    const handleChange = (event: MediaQueryListEvent) => setIsDark(event.matches); // Added type for event
-
-    mediaQuery.addEventListener('change', handleChange);
-    return () => mediaQuery.removeEventListener('change', handleChange);
-  }, []);
-
-  useEffect(() => {
-    // Apply dark class
-    document.documentElement.classList.toggle('dark', isDark);
-  }, [isDark]);
-
-  useEffect(() => {
-    // Intersection Observer
     const observerOptions = {
       threshold: [0, 0.25, 0.5, 0.75, 1],
       rootMargin: '0px',
     };
-
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         const sectionId = entry.target.id;
         const sectionNumber = parseInt(sectionId.replace('section', ''));
-
         if (entry.isIntersecting) {
-          updateBodyBackground(sectionNumber);
           updateTextContent(sectionNumber, entry.intersectionRatio);
         }
       });
     }, observerOptions);
-
     sectionsRef.current.forEach((section) => {
       if (section) sectionObserver.observe(section);
     });
-
     return () => {
       sectionsRef.current.forEach((section) => {
         if (section) sectionObserver.unobserve(section);
@@ -78,61 +86,109 @@ export default function HeroSection() {
     };
   }, []);
 
+  // GSAP ANIMATION LOGIC FOR AVATARS (Sequential Reveal)
   useEffect(() => {
-    // Scroll effects
-    let ticking = false;
+    // Kill existing ScrollTriggers to prevent duplicates on re-renders
+    ScrollTrigger.getAll().forEach(trigger => trigger.kill());
 
-    function updateParallax() {
-      const scrolled = window.pageYOffset;
+    avatarsRef.current.forEach((img, index) => {
+      if (!img) return;
 
-      // Update parallax elements
-      parallaxRef.current.forEach((element) => {
-        if (element) {
-          element.style.transform = `translateY(${scrolled * -0.5}px)`;
+      // Ensure initial state: hidden and slightly offset
+      gsap.set(img, { opacity: 0, y: 50, scale: 0.8 });
+
+      // Create a ScrollTriggered animation for each avatar with staggered timing
+      gsap.to(img, {
+        opacity: 1,
+        y: 0,
+        scale: 1,
+        ease: "back.out(1.7)",
+        delay: index * 0.1, // Stagger the animations
+        scrollTrigger: {
+          trigger: img,
+          start: "top center+=100",
+          end: "top center-=50",
+          toggleActions: "play none none reverse",
+        },
+      });
+    });
+
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
+  }, []);
+
+  useEffect(() => {
+    // Kill previous ScrollTriggers for global background
+    ScrollTrigger.getAll().forEach(trigger => {
+      if (trigger.vars.id && trigger.vars.id.startsWith("globalBgTransition")) {
+        trigger.kill();
+      }
+    });
+
+    const body = document.body;
+    // Set initial background color of the body
+    gsap.set(body, { backgroundColor: sectionConfigs[1].color });
+
+    // Create seamless transitions between sections
+    sectionsRef.current.forEach((section, index) => {
+      if (!section || index === sectionsRef.current.length - 1) return;
+
+      const currentSectionNumber = index + 1;
+      const nextSectionNumber = index + 2;
+      const nextSectionColor = sectionConfigs[nextSectionNumber]?.color;
+
+      if (nextSectionColor) {
+        gsap.to(body, {
+          backgroundColor: nextSectionColor,
+          ease: "none",
+          scrollTrigger: {
+            id: `globalBgTransition${currentSectionNumber}`,
+            trigger: section,
+            start: "bottom center",
+            end: "bottom top",
+            scrub: 1,
+            invalidateOnRefresh: true, // Recalculate on window resize
+          },
+        });
+      }
+    });
+
+    // Cleanup function
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => {
+        if (trigger.vars.id && trigger.vars.id.startsWith("globalBgTransition")) {
+          trigger.kill();
         }
       });
+    };
+  }, [sectionsRef.current.length]);
 
-      // Update avatar positions
-      avatarsRef.current.forEach((avatar, index) => {
-        if (!avatar || !avatarConfigs[index]) return;
+  // BACKGROUND PARALLAX ELEMENTS
+  useEffect(() => {
+    let ticking = false;
 
-        const config = avatarConfigs[index];
-        const moveX = scrolled * config.speedX;
-        const moveY = config.func(scrolled * config.speedY) * config.amplitude;
+    function updateBackgroundParallax() {
+      const scrolled = window.scrollY;
 
-        const maxMoveX = window.innerWidth * 0.3;
-        const constrainedX = Math.max(-maxMoveX, Math.min(maxMoveX, moveX));
-        avatar.style.transform = `translate(${constrainedX}px, ${moveY}px)`;
+      parallaxRef.current.forEach((element) => {
+        if (element) {
+          element.style.transform = `translateY(${scrolled * -0.3}px)`;
+        }
       });
-
       ticking = false;
     }
 
     function requestTick() {
       if (!ticking) {
-        requestAnimationFrame(updateParallax);
+        requestAnimationFrame(updateBackgroundParallax);
         ticking = true;
       }
     }
 
-    window.addEventListener('scroll', requestTick);
+    window.addEventListener('scroll', requestTick, { passive: true });
     return () => window.removeEventListener('scroll', requestTick);
   }, []);
-
-  function updateBodyBackground(sectionNumber: number) { // Added type for sectionNumber
-    const body = document.body;
-    const config = sectionConfigs[sectionNumber];
-
-    if (!config) return;
-
-    // Remove all background classes
-    Object.values(sectionConfigs).forEach(({ bg, text }) => {
-      body.classList.remove(bg, text);
-    });
-
-    // Add current section classes
-    body.classList.add(config.bg, config.text);
-  }
 
   function updateTextContent(sectionNumber: number, ratio: number) {
     const contents: { [key: number]: HTMLDivElement | null } = {
@@ -141,15 +197,10 @@ export default function HeroSection() {
       3: section3ContentRef.current,
       4: section4ContentRef.current
     };
-
-    // Hide all content
     Object.values(contents).forEach(content => {
       if (content) content.style.opacity = '0';
     });
-
-    // Show current content if ratio > 0.3
     if (ratio > 0.3 && contents[sectionNumber]) {
-      // FIX: Null check before accessing style
       if (contents[sectionNumber]) {
         contents[sectionNumber]!.style.opacity = '1';
       }
@@ -158,48 +209,41 @@ export default function HeroSection() {
 
   return (
     <>
-      <div className="bg-[#212020] text-white overflow-x-hidden">
-        {/* Fixed centered text */}
-        <div ref={el => { fixedTextRef.current = el; }} className="fixed-text text-center max-w-4xl px-6">
+      <div className="overflow-x-hidden">
+        {/* Fixed centered text with dynamic color based on background */}
+        <div ref={el => { fixedTextRef.current = el; }} className="fixed-text text-center max-w-4xl px-6 ">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
-            <span className="block">Soufflé </span>
-            <span className="block text-primary"> macaroon shortbread tart .</span>
+            <span className="block">JMPN</span>
+            <span className="block text-primary"> with Rachel</span>
           </h1>
           <p className="text-lg md:text-xl opacity-80 max-w-2xl mx-auto">
-            Soufflé jelly-o macaroon shortbread tart chupa chups pastry tiramisu brownie. Cake carrot cake cake chupa chups marshmallow.
+            Make the days count for you!
           </p>
         </div>
 
-
-
-        {/* Section 1: Black Hero */}
+        {/* Section 1: White Hero */}
         <section
           id="section1"
           ref={el => { sectionsRef.current[0] = el; }}
-          className="section-transition relative h-screen bg-[#212020]text-white overflow-hidden"
+          className=" relative h-screen text-gray-900 overflow-hidden"
         >
           <div ref={el => { parallaxRef.current[0] = el; }} className="bg-image-moving hero-image absolute inset-0"></div>
-          <div className="absolute inset-0 bg-gradient-to-b from-transparent to-black/20"></div>
+          <div className="absolute inset-0 from-transparent to-white/20"></div>
           <div className="parallax-element parallax-back hero-image"></div>
 
-          {/* Moving Avatars */}
+          {/* Moving Avatars with improved spacing */}
           <div className="floating-avatars absolute inset-0 pointer-events-none">
-            {[
-              { initials: 'AT', gradient: 'from-blue-400 to-purple-500', size: 'w-24 h-24 md:w-32 md:h-32', opacity: 'opacity-80', class: 'avatar-1', textSize: 'text-xl' },
-              { initials: 'SB', gradient: 'from-green-400 to-teal-500', size: 'w-20 h-20 md:w-28 md:h-28', opacity: 'opacity-70', class: 'avatar-2', textSize: 'text-lg' },
-              { initials: 'MK', gradient: 'from-orange-400 to-red-500', size: 'w-28 h-28 md:w-36 md:h-36', opacity: 'opacity-90', class: 'avatar-3', textSize: 'text-xl' },
-              { initials: 'JL', gradient: 'from-pink-400 to-purple-600', size: 'w-22 h-22 md:w-30 md:h-30', opacity: 'opacity-60', class: 'avatar-4', textSize: '' },
-              { initials: 'DR', gradient: 'from-indigo-400 to-blue-600', size: 'w-26 h-26 md:w-34 md:h-34', opacity: 'opacity-75', class: 'avatar-5', textSize: 'text-lg' }
-            ].map((avatar, index) => (
-              <div
+            {avatarData.map((avatar, index) => (
+              <Image
                 key={index}
-                ref={el => { avatarsRef.current[index] = el; }}
-                className={`avatar ${avatar.class} absolute ${avatar.size} rounded-full overflow-hidden ${avatar.opacity}`}
-              >
-                <div className={`w-full h-full bg-gradient-to-br ${avatar.gradient} flex items-center justify-center text-white font-bold ${avatar.textSize}`}>
-                  {avatar.initials}
-                </div>
-              </div>
+                src={avatar.imageUrl}
+                alt={`Avatar ${index + 1}`}
+                width={avatar.baseWidth}
+                height={avatar.baseHeight}
+                className={`rounded-full object-cover absolute ${avatar.class} ${avatar.size} ${avatar.positionClasses} `}
+
+                ref={el => { avatarsRef.current[index] = el as HTMLImageElement; }}
+              />
             ))}
           </div>
         </section>
@@ -208,7 +252,7 @@ export default function HeroSection() {
         <section
           id="section2"
           ref={el => { sectionsRef.current[1] = el; }}
-          className="section-transition relative h-screen bg-[#FF1B6B] text-white overflow-hidden"
+          className="section-transition relative h-screen text-white overflow-hidden"
         >
           <div ref={el => { parallaxRef.current[1] = el; }} className="bg-image-moving sport-image-1 absolute inset-0"></div>
           <div className="parallax-element parallax-back sport-image-1"></div>
@@ -217,7 +261,7 @@ export default function HeroSection() {
             className="fixed-text text-center max-w-4xl px-6 opacity-0"
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="block">Soufflé  -</span>
+              <span className="block">Soufflé -</span>
               <span className="block text-accent">jelly-o macaroon shortbread tart chupa chups pastry tiramisu brownie.</span>
             </h2>
             <p className="text-lg md:text-xl opacity-90">
@@ -226,11 +270,11 @@ export default function HeroSection() {
           </div>
         </section>
 
-        {/* Section 3: Pink to White transition */}
+        {/* Section 3: Black transition */}
         <section
           id="section3"
           ref={el => { sectionsRef.current[2] = el; }}
-          className="section-transition relative h-screen bg-[#E8175D] text-white overflow-hidden"
+          className="section-transition relative h-screen text-white overflow-hidden"
         >
           <video
             autoPlay
@@ -240,7 +284,7 @@ export default function HeroSection() {
           >
             <source src="data:video/mp4;base64," type="video/mp4" />
           </video>
-          <div className="absolute inset-0 bg-gradient-to-br from-pink-500/20 via-purple-500/20 to-blue-500/20 animate-pulse"></div>
+          <div className="absolute inset-0  animate-pulse"></div>
 
           <div ref={el => { parallaxRef.current[2] = el; }} className="bg-image-moving sport-image-2 absolute inset-0"></div>
           <div className="parallax-element parallax-back sport-image-2"></div>
@@ -258,11 +302,11 @@ export default function HeroSection() {
           </div>
         </section>
 
-        {/* Section 4: White */}
+        {/* Section 4: Light Gray/White */}
         <section
           id="section4"
           ref={el => { sectionsRef.current[3] = el; }}
-          className="section-transition relative h-screen bg-gray-50 text-gray-900 overflow-hidden"
+          className="section-transition relative h-screen text-gray-900 overflow-hidden"
         >
           <div ref={el => { parallaxRef.current[3] = el; }} className="bg-image-moving sport-image-3 absolute inset-0"></div>
           <div className="parallax-element parallax-back sport-image-3"></div>
@@ -287,7 +331,7 @@ export default function HeroSection() {
         <section
           id="section5"
           ref={el => { sectionsRef.current[4] = el; }}
-          className="section-transition relative h-screen bg-white text-gray-900 overflow-hidden"
+          className="section-transition relative h-screen text-gray-900 overflow-hidden"
         >
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="text-center max-w-4xl px-6">
