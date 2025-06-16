@@ -103,11 +103,11 @@ export default function HeroSection() {
         y: 0,
         scale: 1,
         ease: "back.out(1.7)",
-        delay: index * 0.1, // Stagger the animations
+        delay: index * 0.1,
         scrollTrigger: {
           trigger: img,
-          start: "top center+=100",
-          end: "top center-=50",
+          start: "top center+=50",
+          end: "top center-=150",
           toggleActions: "play none none reverse",
         },
       });
@@ -262,11 +262,15 @@ export default function HeroSection() {
           >
             <h2 className="text-4xl md:text-5xl font-bold mb-4">
               <span className="block">Soufflé -</span>
-              <span className="block text-accent">jelly-o macaroon shortbread tart chupa chups pastry tiramisu brownie.</span>
+              <span className="block text-accent">Let's stay <b>fit</b>for <b>life</b> I am committed to empower through movement and encourage others to build on their strengths. and maintain good habits</span>
             </h2>
+            <h3> Consistency is key!</h3>
             <p className="text-lg md:text-xl opacity-90">
-              Cake carrot cake cake chupa chups marshmallow.
+              Virtual Group Sessions
+              <br /> 6AM  - 7AM <br />
+              Monday / Wednesday / Friday
             </p>
+            email for zoom link
           </div>
         </section>
 
@@ -280,12 +284,12 @@ export default function HeroSection() {
             autoPlay
             muted
             loop
-            className="absolute inset-0 w-full h-full object-cover opacity-30"
+            className="absolute inset-0 w-full h-full object-cover opacity-75"
           >
-            <source src="data:video/mp4;base64," type="video/mp4" />
+            <source src="https://res.cloudinary.com/dyczhwkws/video/upload/yplsk8xffg8auhaopprt.mp4" type="video/mp4" />
+            Your browser does not support the video tag.
           </video>
           <div className="absolute inset-0  animate-pulse"></div>
-
           <div ref={el => { parallaxRef.current[2] = el; }} className="bg-image-moving sport-image-2 absolute inset-0"></div>
           <div className="parallax-element parallax-back sport-image-2"></div>
           <div
