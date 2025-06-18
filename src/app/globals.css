@@ -1,5 +1,9 @@
 @import "tailwindcss";
 
+.mark {
+  font-size: 4.5rem;
+  font-family: var(--font-permanent-marker);
+}
 .parallax-container {
   perspective: 1px;
   height: 120vh;
@@ -68,45 +72,21 @@
   transition: transform 0.1s ease-out;
   will-change: transform;
 }
-
-/* Heart image container */
-.heart-image {
-  width: 120px;
-  height: 120px;
-  background: linear-gradient(135deg, #ff1b6b 0%, #ffd23f 100%);
-  border-radius: 50%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  margin: 0 auto 2rem auto;
-  position: relative;
-  z-index: 5;
+.text-lg {
+  padding: 0 20px; /* Example default padding, adjust as needed */
 }
 
-.heart-icon {
-  width: 60px;
-  height: 60px;
-  background: white;
-  position: relative;
-  transform: rotate(45deg);
-}
+/* Media query for mobile screens (e.g., less than 768px wide) */
+@media (max-width: 767px) {
+  .text-lg {
+    padding: 0 0px;
+    margin: 0; /* Reduce horizontal padding for mobile */
+  }
 
-.heart-icon::before,
-.heart-icon::after {
-  content: "";
-  width: 60px;
-  height: 60px;
-  position: absolute;
-  background: white;
-  border-radius: 50%;
-}
-
-.heart-icon::before {
-  top: -30px;
-  left: 0;
-}
-
-.heart-icon::after {
-  top: 0;
-  left: -30px;
+  /* You might also want to adjust vertical spacing if needed */
+  .mb-4 {
+    /* For the heading margin-bottom */
+    margin-bottom: 1rem;
+    /* Adjust as needed for mobile */
+  }
 }

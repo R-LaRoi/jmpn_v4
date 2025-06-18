@@ -21,8 +21,8 @@ export default function HeroSection() {
   const sectionConfigs: { [key: number]: { color: string; } } = {
     1: { color: '#FFFFFF' }, // White (Hero)
     2: { color: '#FF1B6B' }, // Bright Pink
-    3: { color: '#212020' }, // Black
-    4: { color: '#F9FAFB' }, // Light Gray
+    3: { color: '#292929 ' }, // Black
+    4: { color: '#FFFFF ' }, // Light Gray
     5: { color: '#FFFFFF' }  // White (Final)
   };
 
@@ -141,14 +141,15 @@ export default function HeroSection() {
       if (nextSectionColor) {
         gsap.to(body, {
           backgroundColor: nextSectionColor,
-          ease: "none",
+          duration: 0.01,
+          ease: "power2.out",  // Better easing
           scrollTrigger: {
             id: `globalBgTransition${currentSectionNumber}`,
             trigger: section,
-            start: "bottom center",
-            end: "bottom top",
-            scrub: 1,
-            invalidateOnRefresh: true, // Recalculate on window resize
+            start: "bottom 60%",
+            end: "bottom 20%",
+            scrub: .5,
+            invalidateOnRefresh: true,
           },
         });
       }
@@ -173,7 +174,7 @@ export default function HeroSection() {
 
       parallaxRef.current.forEach((element) => {
         if (element) {
-          element.style.transform = `translateY(${scrolled * -0.3}px)`;
+          element.style.transform = `translateY(${scrolled * -0.1}px)`;
         }
       });
       ticking = false;
@@ -200,7 +201,7 @@ export default function HeroSection() {
     Object.values(contents).forEach(content => {
       if (content) content.style.opacity = '0';
     });
-    if (ratio > 0.3 && contents[sectionNumber]) {
+    if (ratio > 0.1 && contents[sectionNumber]) {
       if (contents[sectionNumber]) {
         contents[sectionNumber]!.style.opacity = '1';
       }
@@ -213,10 +214,17 @@ export default function HeroSection() {
         {/* Fixed centered text with dynamic color based on background */}
         <div ref={el => { fixedTextRef.current = el; }} className="fixed-text text-center max-w-4xl px-6 ">
           <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
-            <span className="block">JMPN</span>
-            <span className="block text-primary"> with Rachel</span>
+            <Image
+              src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750281254/JMPN_tpufgy.png'
+              alt="Logo"
+              width={500}
+              height={500}
+            />
+
+
+
           </h1>
-          <p className="text-lg md:text-xl opacity-80 max-w-2xl mx-auto">
+          <p className="text-lg md:text-3xl opacity-80 max-w-2xl mx-auto">
             Make the days count for you!
           </p>
         </div>
@@ -258,19 +266,21 @@ export default function HeroSection() {
           <div className="parallax-element parallax-back sport-image-1"></div>
           <div
             ref={el => { section2ContentRef.current = el; }}
-            className="fixed-text text-center max-w-4xl px-6 opacity-0"
+            className="md:fixed-text text-center max-w-5xl px-6 md:px-8 opacity-0 m-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2"
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="block">Soufflé -</span>
-              <span className="block text-accent">Let's stay <b>fit</b>for <b>life</b> I am committed to empower through movement and encourage others to build on their strengths. and maintain good habits</span>
-            </h2>
-            <h3> Consistency is key!</h3>
-            <p className="text-lg md:text-xl opacity-90">
-              Virtual Group Sessions
-              <br /> 6AM  - 7AM <br />
-              Monday / Wednesday / Friday
-            </p>
-            email for zoom link
+
+            <Image
+              src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280550/4_xs5x70.png'
+              alt="Logo"
+              width={500}
+              height={500}
+            />
+            <span className="block text-accent text-2xl mb-8">Let's stay <b>fit for life!</b> I am committed to empower through movement and encourage others to build on their strengths. and maintain good habits</span>
+
+
+
+
+
           </div>
         </section>
 
@@ -294,15 +304,25 @@ export default function HeroSection() {
           <div className="parallax-element parallax-back sport-image-2"></div>
           <div
             ref={el => { section3ContentRef.current = el; }}
-            className="fixed-text text-center max-w-4xl px-6 opacity-0"
+            className="fixed-text text-center max-w-4xl px-0 opacity-0 "
           >
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="block">Cake carrot cake </span>
-              <span className="block text-accent">cake chupa chups marshmallow.</span>
-            </h2>
-            <p className="text-lg md:text-xl opacity-90">
-              cake chupa chups marshmallow.
-            </p>
+            <div className="text-4xl md:text-5xl font-bold mb-4">
+              <div>
+                <Image
+                  src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280550/5_uzresn.png'
+                  alt="Logo"
+                  width={500}
+                  height={500}
+                />
+                <p className="text-lg md:text-xl opacity-90">
+                  Join us for out virtual group sessions.
+                  <br /> 6AM  - 7AM <br />
+                  Monday / Wednesday / Friday
+                </p>
+                <p> email for zoom link</p>
+              </div>
+            </div>
+
           </div>
         </section>
 
@@ -316,17 +336,29 @@ export default function HeroSection() {
           <div className="parallax-element parallax-back sport-image-3"></div>
           <div
             ref={el => { section4ContentRef.current = el; }}
-            className="fixed-text text-center max-w-4xl px-6 opacity-0"
+            className="md:fixed-text text-center max-w-5xl px-6 md:px-8 opacity-0 m-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2"
           >
-            <div className="heart-image">
-              <div className="heart-icon"></div>
+            <div className='avatar-image mt-12 mb-0 md:mb-4 ' style={{ display: 'flex', justifyContent: 'center' }} >
+              <Image
+                alt="image of woman excercising"
+                width={150}
+                height={150}
+                className="md:w-[200px] md:h-[200px]"
+                src='https://res.cloudinary.com/dyczhwkws/image/upload/v1749848933/2_lbu6s9.png'
+              />
             </div>
-            <h2 className="text-4xl md:text-5xl font-bold mb-4">
-              <span className="block">cake chupa chups marshmallow.</span>
-              <span className="block text-primary">Toffee jelly beans chocolate cake cake icing. </span>
+            <h2 className="text-6xl md:text-7xl font-bold ">
+              <Image
+                alt="image of woman excercising"
+                width={150}
+                height={150}
+                className="md:w-[200px] md:h-[200px]"
+                src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280551/7_r40pvq.png'
+              />
             </h2>
-            <p className="text-lg md:text-xl opacity-80">
-              Bear claw cupcake tart pudding pudding sweet. Croissant donut carrot cake jelly beans candy cheesecake marshmallow chocolate chu
+
+            <p className=" ">
+              <b>Always on, high energy, and unmatched!</b> Rachel, an ACE certified personal trainer, is your dedicated partner, ready to empower you through every step of your fitness journey. With a specialized focus on bodyweight movements, she'll guide you through effective <b>HIIT</b> flows and challenging cardio sessions to help you <b>build strength</b>, enhance conditioning, and refine your <b>balance</b>. Rachel is ready to help you push beyond your expectations—wherever you are, whenever you're ready. <b>Jump in</b> and let's get started!
             </p>
           </div>
         </section>
