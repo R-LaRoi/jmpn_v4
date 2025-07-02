@@ -4,7 +4,7 @@ import Image from 'next/image';
 import '../globals.css';
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
-
+import Link from 'next/link';
 gsap.registerPlugin(ScrollTrigger);
 
 export default function HeroSection() {
@@ -14,18 +14,20 @@ export default function HeroSection() {
   const section2ContentRef = useRef<HTMLDivElement | null>(null);
   const section3ContentRef = useRef<HTMLDivElement | null>(null);
   const section4ContentRef = useRef<HTMLDivElement | null>(null);
+  const section5ContentRef = useRef<HTMLDivElement | null>(null);
   const avatarsRef = useRef<(HTMLImageElement | null)[]>([]);
   const parallaxRef = useRef<(HTMLDivElement | null)[]>([]);
 
+  // Track current visible section
+  const [currentSection, setCurrentSection] = useState(1);
 
   const sectionConfigs: { [key: number]: { color: string; } } = {
     1: { color: '#FFFFFF' }, // White (Hero)
     2: { color: '#FF1B6B' }, // Bright Pink
-    3: { color: '#292929 ' }, // Black
-    4: { color: '#FFFFF ' }, // Light Gray
+    3: { color: '#292929' }, // Black
+    4: { color: '#FFFFFF' }, // Light Gray
     5: { color: '#FFFFFF' }  // White (Final)
   };
-
 
   interface AvatarItem {
     imageUrl: string;
@@ -39,7 +41,6 @@ export default function HeroSection() {
   const commonAvatarWidth = 120;
   const commonAvatarHeight = 120;
   const commonAvatarSizeClass = 'w-28 h-28 md:w-28 md:h-28 lg:w-36 lg:h-36';
-
 
   const avatarData: AvatarItem[] = [
     // Top row
@@ -59,32 +60,58 @@ export default function HeroSection() {
     { imageUrl: 'https://res.cloudinary.com/dyczhwkws/image/upload/v1749848934/8_vdlo4t.png', class: 'avatar-8', size: commonAvatarSizeClass, baseWidth: commonAvatarWidth, baseHeight: commonAvatarHeight, positionClasses: 'right-16 bottom-20 sm:right-24 sm:bottom-24 md:right-32' }
   ];
 
-
-
-  // Section content visibility observer
+  // Section content visibility observer - FIXED VERSION
   useEffect(() => {
     const observerOptions = {
-      threshold: [0, 0.25, 0.5, 0.75, 1],
-      rootMargin: '0px',
+      threshold: [0.3, 0.7], // Simplified thresholds
+      rootMargin: '-10% 0px -10% 0px', // More stable detection area
     };
+
     const sectionObserver = new IntersectionObserver((entries) => {
       entries.forEach((entry) => {
         const sectionId = entry.target.id;
         const sectionNumber = parseInt(sectionId.replace('section', ''));
-        if (entry.isIntersecting) {
-          updateTextContent(sectionNumber, entry.intersectionRatio);
+
+        // Only update if section is sufficiently visible
+        if (entry.isIntersecting && entry.intersectionRatio > 0.5) {
+          setCurrentSection(sectionNumber);
         }
       });
     }, observerOptions);
+
     sectionsRef.current.forEach((section) => {
       if (section) sectionObserver.observe(section);
     });
+
     return () => {
       sectionsRef.current.forEach((section) => {
         if (section) sectionObserver.unobserve(section);
       });
     };
   }, []);
+
+  // Update text content based on current section - FIXED VERSION
+  useEffect(() => {
+    const contents: { [key: number]: HTMLDivElement | null } = {
+      1: fixedTextRef.current,
+      2: section2ContentRef.current,
+      3: section3ContentRef.current,
+      4: section4ContentRef.current,
+      5: section5ContentRef.current
+    };
+
+    // Hide all content first
+    Object.values(contents).forEach(content => {
+      if (content) {
+        gsap.to(content, { opacity: 0, duration: 0.3 });
+      }
+    });
+
+    // Show current section content with smooth transition
+    if (contents[currentSection]) {
+      gsap.to(contents[currentSection], { opacity: 1, duration: 0.5, delay: 0.1 });
+    }
+  }, [currentSection]);
 
   // GSAP ANIMATION LOGIC FOR AVATARS (Sequential Reveal)
   useEffect(() => {
@@ -118,6 +145,7 @@ export default function HeroSection() {
     };
   }, []);
 
+  // FIXED BACKGROUND COLOR TRANSITIONS
   useEffect(() => {
     // Kill previous ScrollTriggers for global background
     ScrollTrigger.getAll().forEach(trigger => {
@@ -130,26 +158,35 @@ export default function HeroSection() {
     // Set initial background color of the body
     gsap.set(body, { backgroundColor: sectionConfigs[1].color });
 
-    // Create seamless transitions between sections
+    // Create seamless transitions between sections with consistent timing
     sectionsRef.current.forEach((section, index) => {
-      if (!section || index === sectionsRef.current.length - 1) return;
+      if (!section) return;
 
       const currentSectionNumber = index + 1;
       const nextSectionNumber = index + 2;
       const nextSectionColor = sectionConfigs[nextSectionNumber]?.color;
 
-      if (nextSectionColor) {
+      if (nextSectionColor && nextSectionNumber <= 5) {
         gsap.to(body, {
           backgroundColor: nextSectionColor,
-          duration: 0.01,
-          ease: "power2.out",  // Better easing
+          duration: 0.5, // Slightly longer duration for smoother transition
+          ease: "power2.inOut",
           scrollTrigger: {
             id: `globalBgTransition${currentSectionNumber}`,
             trigger: section,
-            start: "bottom 60%",
-            end: "bottom 20%",
-            scrub: .5,
+            start: "bottom 70%", // Start earlier
+            end: "bottom 30%", // End later
+            scrub: 1, // Smoother scrub value
             invalidateOnRefresh: true,
+            onUpdate: (self) => {
+              // For section 3, ensure proper color handling
+              if (currentSectionNumber === 2 && nextSectionNumber === 3) {
+                const progress = self.progress;
+                const startColor = sectionConfigs[2].color;
+                const endColor = sectionConfigs[3].color;
+                gsap.set(body, { backgroundColor: gsap.utils.interpolate(startColor, endColor, progress) });
+              }
+            }
           },
         });
       }
@@ -191,41 +228,22 @@ export default function HeroSection() {
     return () => window.removeEventListener('scroll', requestTick);
   }, []);
 
-  function updateTextContent(sectionNumber: number, ratio: number) {
-    const contents: { [key: number]: HTMLDivElement | null } = {
-      1: fixedTextRef.current,
-      2: section2ContentRef.current,
-      3: section3ContentRef.current,
-      4: section4ContentRef.current
-    };
-    Object.values(contents).forEach(content => {
-      if (content) content.style.opacity = '0';
-    });
-    if (ratio > 0.1 && contents[sectionNumber]) {
-      if (contents[sectionNumber]) {
-        contents[sectionNumber]!.style.opacity = '1';
-      }
-    }
-  }
-
   return (
     <>
       <div className="overflow-x-hidden">
         {/* Fixed centered text with dynamic color based on background */}
-        <div ref={el => { fixedTextRef.current = el; }} className="fixed-text text-center max-w-4xl px-6 ">
-          <h1 className="text-4xl md:text-6xl lg:text-7xl font-bold mb-4 leading-tight">
+        <div ref={el => { fixedTextRef.current = el; }} className="fixed-text text-center max-w-4xl px-4">
+          <div className="mt-[-20%]"> {/* Added a div to contain the image and provide margin-bottom */}
             <Image
               src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750281254/JMPN_tpufgy.png'
               alt="Logo"
-              width={500}
-              height={500}
+              width={700}
+              height={800}
+
             />
-
-
-
-          </h1>
-          <p className="text-lg md:text-3xl opacity-80 max-w-2xl mx-auto">
-            Make the days count for you!
+          </div>
+          <p className="text-md md:text-xl opacity-80 max-w-2xl mx-auto mt-[-15%]">
+            No summer breaks! Only summer breakthroughs. Commitment to fitness is a year-round journey. Let's stay fit for life!
           </p>
         </div>
 
@@ -249,7 +267,6 @@ export default function HeroSection() {
                 width={avatar.baseWidth}
                 height={avatar.baseHeight}
                 className={`rounded-full object-cover absolute ${avatar.class} ${avatar.size} ${avatar.positionClasses} `}
-
                 ref={el => { avatarsRef.current[index] = el as HTMLImageElement; }}
               />
             ))}
@@ -268,19 +285,13 @@ export default function HeroSection() {
             ref={el => { section2ContentRef.current = el; }}
             className="md:fixed-text text-center max-w-5xl px-6 md:px-8 opacity-0 m-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2"
           >
-
             <Image
               src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280550/4_xs5x70.png'
               alt="Logo"
               width={500}
               height={500}
             />
-            <span className="block text-accent text-2xl mb-8">Let's stay <b>fit for life!</b> I am committed to empower through movement and encourage others to build on their strengths. and maintain good habits</span>
-
-
-
-
-
+            <span className="block text-accent text-2xl mb-8 pb-12">Let's stay <b className='text-3xl'>fit for life</b>! I am committed to empower through movement and encourage others to build on their strengths. and maintain good habits</span>
           </div>
         </section>
 
@@ -299,14 +310,14 @@ export default function HeroSection() {
             <source src="https://res.cloudinary.com/dyczhwkws/video/upload/yplsk8xffg8auhaopprt.mp4" type="video/mp4" />
             Your browser does not support the video tag.
           </video>
-          <div className="absolute inset-0  animate-pulse"></div>
+          <div className="absolute inset-0 animate-pulse"></div>
           <div ref={el => { parallaxRef.current[2] = el; }} className="bg-image-moving sport-image-2 absolute inset-0"></div>
           <div className="parallax-element parallax-back sport-image-2"></div>
           <div
             ref={el => { section3ContentRef.current = el; }}
             className="fixed-text text-center max-w-4xl px-0 opacity-0 "
           >
-            <div className="text-4xl md:text-5xl font-bold mb-4">
+            <div className="text-xl md:text-xl font-bold">
               <div>
                 <Image
                   src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280550/5_uzresn.png'
@@ -314,15 +325,19 @@ export default function HeroSection() {
                   width={500}
                   height={500}
                 />
-                <p className="text-lg md:text-xl opacity-90">
+                <p className=" mt-[-20%] text-lg md:text-2xl opacity-90">
                   Join us for out virtual group sessions.
                   <br /> 6AM  - 7AM <br />
                   Monday / Wednesday / Friday
                 </p>
-                <p> email for zoom link</p>
+                <a
+                  href="mailto:contact@rachelstroy.com"
+                  className="bg-[#FF1B6B] text-white mt-8 py-2 px-4 rounded-full font-semibold inline-block text-center whitespace-nowrap hover:bg-white hover:text-[#FF1B6B] focus:outline-none focus:ring-2 focus:ring-[#FF1B6B] focus:ring-opacity-75 transition ease-in-out duration-300 border border-transparent hover:border-[#FF1B6B] "
+                >
+                  Email for Zoom Link
+                </a>
               </div>
             </div>
-
           </div>
         </section>
 
@@ -338,26 +353,24 @@ export default function HeroSection() {
             ref={el => { section4ContentRef.current = el; }}
             className="md:fixed-text text-center max-w-5xl px-6 md:px-8 opacity-0 m-0 md:absolute md:top-1/2 md:left-1/2 md:transform md:-translate-x-1/2 md:-translate-y-1/2"
           >
-            <div className='avatar-image mt-12 mb-0 md:mb-4 ' style={{ display: 'flex', justifyContent: 'center' }} >
+            <div className='avatar-image mt-[40%] mb-0 md:mb-4 ' style={{ display: 'flex', justifyContent: 'center' }} >
               <Image
                 alt="image of woman excercising"
                 width={150}
                 height={150}
-                className="md:w-[200px] md:h-[200px]"
+                className="md:w-[200px] md:h-[200px] "
                 src='https://res.cloudinary.com/dyczhwkws/image/upload/v1749848933/2_lbu6s9.png'
               />
             </div>
-            <h2 className="text-6xl md:text-7xl font-bold ">
+            <div className="text-6xl md:text-7xl font-bold" style={{ display: 'flex', justifyContent: 'center' }} >
               <Image
-                alt="image of woman excercising"
-                width={150}
-                height={150}
-                className="md:w-[200px] md:h-[200px]"
+                alt="meet rachel text"
+                width={250}
+                height={250}
                 src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280551/7_r40pvq.png'
               />
-            </h2>
-
-            <p className=" ">
+            </div>
+            <p className="mt-[-10%] pb-[30%]">
               <b>Always on, high energy, and unmatched!</b> Rachel, an ACE certified personal trainer, is your dedicated partner, ready to empower you through every step of your fitness journey. With a specialized focus on bodyweight movements, she'll guide you through effective <b>HIIT</b> flows and challenging cardio sessions to help you <b>build strength</b>, enhance conditioning, and refine your <b>balance</b>. Rachel is ready to help you push beyond your expectations—wherever you are, whenever you're ready. <b>Jump in</b> and let's get started!
             </p>
           </div>
@@ -370,14 +383,38 @@ export default function HeroSection() {
           className="section-transition relative h-screen text-gray-900 overflow-hidden"
         >
           <div className="absolute inset-0 flex items-center justify-center">
-            <div className="text-center max-w-4xl px-6">
-              <h2 className="text-4xl md:text-6xl font-bold mb-8">
-                Bear claw cupcake
-                <span className="text-primary">tart pudding pudding sweet. </span>
-              </h2>
-              <button className="bg-[#E8175D] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary/90 transition-colors">
-                jelly beans candy
-              </button>
+            <div className="text-center max-w-4xl px-6 mt-[20%]" >
+              <Image
+                src='https://res.cloudinary.com/dyczhwkws/image/upload/v1750280550/6_pih1ku.png'
+                alt="Logo"
+                width={500}
+                height={500}
+              />
+
+              <p className="text-lg md:text-xl opacity-90 mb-8 mt-[-20%]">
+                Beyond the workout, beyond the session—your evolution is ongoing. Plug into our network for daily inspiration, expert tips, and a community dedicated to peak performance. Let's build consistency together./</p>
+              <div className='p-8'>
+                <Link href="https://venmo.com/u/RAE-WHOO-1" passHref>
+                  <button className="bg-[#E8175D] text-white p-8 py-4 rounded-full text-lg font-semibold hover:bg-primary/90 transition-colors mr-4">
+                    Venmo
+                  </button>
+                </Link>
+                <Link href="https://venmo.com/u/RAE-WHOO-1" passHref>
+                  <button className="bg-[#E8175D] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary/90 transition-colors mr-4 ">
+                    Tik Tok
+                  </button>
+                </Link>
+                <Link href="contact@rachelstroy.com"  >
+                  <button className="bg-[#E8175D] text-white px-8 py-4 rounded-full text-lg font-semibold hover:bg-primary/90 transition-colors ">
+                    Email
+                  </button>
+                </Link>
+              </div>
+              <div className="w-full max-w-lg mx-auto pb-[50%]">
+                <iframe
+                  style={{ borderRadius: '12px' }}
+                  src="https://open.spotify.com/embed/playlist/02LtXdK3vRDKtKSiQxuTIq?utm_source=generator" width="100%" height="352" frameBorder="0" allowFullScreen="" allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture" loading="lazy"></iframe>
+              </div>
             </div>
           </div>
         </section>
